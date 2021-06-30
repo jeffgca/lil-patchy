@@ -1,5 +1,9 @@
 /* global browser */
 
+document.addEventListener('DOMContentLoaded', (event) => {
+  console.log('DOMContentLoaded', Date.now());
+});
+
 const sendMessage = function (request, sender, sendResponse) {
   sendResponse({ farewell: 'goodbye' });
 
@@ -9,3 +13,5 @@ const sendMessage = function (request, sender, sendResponse) {
 };
 
 browser.runtime.onMessage.addListener(sendMessage);
+
+

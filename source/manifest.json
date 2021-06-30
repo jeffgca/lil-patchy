@@ -11,7 +11,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://*.fission.app/"],
+      "matches": ["https://stupid-enormous-square-hero.fission.app/"],
       "js": ["proxy.js"]
     }
   ],

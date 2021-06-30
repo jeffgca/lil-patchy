@@ -2,39 +2,41 @@
 
 const APP_URL = 'https://stupid-enormous-square-hero.fission.app/';
 
-async function capturePage() {
-  const imageUri = await browser.tabs.captureTab();
+async function capturePage(tabId) {
+  const imageUri = await browser.tabs.captureTab(tabId);
 
   return {
     imageUri,
-    timestamp: Date.now(),
-    url: browser.tabs.ActiveTab.url
+    timestamp: Date.now()
   };
 }
 
-async function runAction() {
+async function runAction(tab) {
+
+  /** defensive - get the screenshot first before we go monkeying around with opening tabs */
+  const pageInfo = await capturePage(tab.tabId);
+
+  pageInfo.url = tab.url;
+
   browser.tabs.query({ url: APP_URL })
     .then(async tabs => {
-      const tab = tabs.find(tab => tab.url === APP_URL);
+      let app = tabs.find(tab => tab.url === APP_URL);
 
-      if (tab) {
-        console.log('App already open');
-
-        const pageInfo = await capturePage();
-
-        browser.tabs.sendMessage(tab.id, pageInfo, response => {
-          console.log('Response from content script:', response.farewell);
-        });
-      } else {
+      if (!app) {
         console.log('Opening app');
-
-        browser.tabs.create({
+        app = await browser.tabs.create({
           active: false,
           url: APP_URL
         });
-
-        // Now what?
+      } else {
+        console.log('App already open');
       }
+
+      console.log('pageInfo>', pageInfo);
+
+      browser.tabs.sendMessage(app.id, pageInfo, response => {
+        console.log('Response from content script:', response.farewell);
+      });
     })
     .catch(error => console.log(`Error: ${error}`));
 }

@@ -18,15 +18,14 @@
 		],
 		"rules": {
 			"no-unused-vars": [
-				"error",
+				"warn",
 				{
 					"varsIgnorePattern": "browser"
 				}
 			],
       "object-curly-spacing": ["warn", "always"],
       "arrow-parens": ["error", "as-needed"],
-      "padded-blocks": ["warn", "never", {"allowSingleLineBlocks": true }],
-      "no-unused-vars": ["warn"]
+      "padded-blocks": ["warn", "never", {"allowSingleLineBlocks": true }]
 		},
     "space": 2
 	},
