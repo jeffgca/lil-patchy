@@ -1,26 +1,26 @@
 {
-    "description": "Screenshots webpages and sends them to webnative for storage",
-    "manifest_version": 2,
-    "name": "pachy",
-    "version": "0.0.1",
-    "icons": {
-        "32": "icons/fission-32.png"
-    },
-    "background": {
-        "scripts": ["background.js"]
-    },
-    "content_scripts": [
-        {
-            "matches": ["https://stupid-enormous-square-hero.fission.app/"],
-            "js": ["proxy.js"]
-        }
-    ],
-    "browser_action": {
-        "default_icon": "icons/fission-32.png"
-    },
-    "permissions": [
-        "<all_urls>",
-        "tabs",
-        "https://stupid-enormous-square-hero.fission.app/"
-      ]
+  "description": "Screenshots webpages and sends them to webnative for storage",
+  "manifest_version": 2,
+  "name": "pachy",
+  "version": "0.0.1",
+  "icons": {
+    "32": "icons/fission-32.png"
+  },
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.fission.app/"],
+      "js": ["proxy.js"]
+    }
+  ],
+  "browser_action": {
+    "default_icon": "icons/fission-32.png"
+  },
+  "permissions": [
+    "<all_urls>",
+    "tabs",
+    "activeTab"
+  ]
 }

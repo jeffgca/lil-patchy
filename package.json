@@ -22,8 +22,13 @@
 				{
 					"varsIgnorePattern": "browser"
 				}
-			]
-		}
+			],
+      "object-curly-spacing": ["warn", "always"],
+      "arrow-parens": ["error", "as-needed"],
+      "padded-blocks": ["warn", "never", {"allowSingleLineBlocks": true }],
+      "no-unused-vars": ["warn"]
+		},
+    "space": 2
 	},
 	"stylelint": {
 		"extends": "stylelint-config-xo"
@@ -47,7 +52,7 @@
 		"parcel": "^2.0.0-nightly.596",
 		"stylelint": "^13.10.0",
 		"stylelint-config-xo": "^0.20.0",
-		"xo": "^0.37.1"
+		"xo": "^0.40.3"
 	},
 	"webExt": {
 		"sourceDir": "distribution"
