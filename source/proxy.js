@@ -1,7 +1,7 @@
 /* global browser */
 
-document.addEventListener('DOMContentLoaded', (event) => {
-  console.log('DOMContentLoaded', Date.now());
+window.onMessage.addListener(event => {
+  console.log('got an event from the app', event);
 });
 
 const sendMessage = function (request, sender, sendResponse) {
@@ -13,5 +13,3 @@ const sendMessage = function (request, sender, sendResponse) {
 };
 
 browser.runtime.onMessage.addListener(sendMessage);
-
-

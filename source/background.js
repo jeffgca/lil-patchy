@@ -2,18 +2,25 @@
 
 const APP_URL = 'https://stupid-enormous-square-hero.fission.app/';
 
-async function capturePage(tabId) {
-  const imageUri = await browser.tabs.captureTab(tabId);
+async function extractMetaData(tabId) {
+  return browser.tabs.executeScript(tabId, {
+    code: 'console.log("running!!");'
+  });
+}
 
+async function capturePage(tabId) {
+  const imageUri = await browser.tabs.captureVisibleTab(tabId);
+
+  const meta = await extractMetaData(tabId);
   return {
     imageUri,
-    timestamp: Date.now()
+    timestamp: Date.now(),
+    meta
   };
 }
 
 async function runAction(tab) {
-
-  /** defensive - get the screenshot first before we go monkeying around with opening tabs */
+  /** Defensive - get the screenshot first before we go monkeying around with opening tabs */
   const pageInfo = await capturePage(tab.tabId);
 
   pageInfo.url = tab.url;
@@ -22,14 +29,14 @@ async function runAction(tab) {
     .then(async tabs => {
       let app = tabs.find(tab => tab.url === APP_URL);
 
-      if (!app) {
+      if (app) {
+        console.log('App already open');
+      } else {
         console.log('Opening app');
         app = await browser.tabs.create({
           active: false,
           url: APP_URL
         });
-      } else {
-        console.log('App already open');
       }
 
       console.log('pageInfo>', pageInfo);
