@@ -1,41 +1,46 @@
 /* global browser */
+
 const APP_URL = 'https://stupid-enormous-square-hero.fission.app/';
 const EXT_URL = browser.runtime.getURL('pages');
 
-class TabChannel {
-  constructor(options) {
-    if (options.tabId) {
-      this.tabId = options.tabId;
-    } else {
-      throw "No options.tabId found.";
-    } 
-  }
-  async inject() {
-    this.tab = await browser.tabs.executeScript({file: './injected.js'});
-  }
+console.log(EXT_URL);
+
+
+async function captureTabImage(tabId) {
+  console.log('captureTabImage');
+  return await browser.tabs.captureVisibleTab(tabId);
 }
 
-// browser.tabs.create({
-//   url: `${EXT_URL}/queue.html`
-// });
-
-// console.log('EXT_URL', EXT_URL);
-
-async function capturePage(tabId) {
-  // TODO this is just the visible area, need to investigate techniques for capturing the full page
-  try {
-    let imageUri = await browser.tabs.captureVisibleTab(tabId);
-  } catch (e) {
-    throw e;
-  }
-
-  // const meta = await extractMetaData(tabId);
-  console.log(imageUri);
-
-  return {
-    imageUri,
-    timestamp: Date.now()
+async function handlePageData(data) {
+  console.log('handlePageData');
+  let imageData = await captureTabImage();
+  let ts = Date.now();
+  let pageInfo = {
+    imageData: imageData,
+    timestamp: ts,
+    meta: data
   };
+
+  console.log(pageInfo);
+
+  let key = `patchy-queue::${pageInfo.timestamp}`;
+  localforage.setItem(key, pageInfo).then((result) => {
+    console.log("okay?");
+    setTimeout(() => {
+      openQueue();
+    }, 2000);
+  })
+  .catch((err) => { throw err; });
+}
+
+browser.runtime.onMessage.addListener(handlePageData);
+
+async function captureMetaData(tabId) {
+  let page = await browser.tabs.executeScript(tabId, {
+    file: './meta-scraper.js'
+  });
+
+  return page;
 }
 
 async function ensureTabIsOpen(url, active=true) {
@@ -44,45 +49,13 @@ async function ensureTabIsOpen(url, active=true) {
 
   console.log(tabs);
 
-  // tabs[0].executeScript({code: 'console.log("hello from the background")'});
-
-  console.log(tabs[0].id);
-  // browser.tabs.executeScript(
-  //   tabs[0].id, {code: `console.log('location:', window.location.href);`}
-  // );
-
-  let channel = new TabChannel({tabId: tabs[0].id});
-
-
 }
 
-// ensureTabIsOpen(`${EXT_URL}/queue.html`);
-
-ensureTabIsOpen(APP_URL);
-
 async function runAction(tab) {
-  /** Defensive - get the screenshot first before we go monkeying around with opening tabs */
-  console.log('got here', tab);
-  // const pageInfo = await capturePage(tab.tabId);
-  let imageUri = await browser.tabs.captureVisibleTab(tab.tabId);
 
-  // console.log('next', imageUri);
-
-  let pageInfo = {
-    url: tab.url,
-    imageUri, 
-    timestamp: Date.now()
-  }
-
-  let key = `patchy-queue::${pageInfo.timestamp}`;
-  await localforage.setItem(key, pageInfo);
-
-  // await openApp();
-  let created = await browser.tabs.create({
-    url: `${EXT_URL}/queue.html`
+  await browser.tabs.executeScript(tab.tabId, {
+    file: 'meta-scraper.js'
   });
-
-  // console.log(created);
 }
 
 function openApp() {
@@ -104,3 +77,21 @@ function openApp() {
 }
 
 browser.browserAction.onClicked.addListener(runAction);
+
+function openQueue() {
+  browser.tabs.create({
+    url: `${EXT_URL}/queue.html`,
+    active: false
+  });
+}
+
+// browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
+
+//   if (browser.runtime.id === sender.id) {
+//     console.log(request, sender, sendResponse);
+//   }
+//   else {
+//     console.log(`Caught message from another extension: ${sender.id}`);
+//   }
+  
+// });

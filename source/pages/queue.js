@@ -5,8 +5,7 @@ localforage.iterate(function(value, key, i) {
   // will be executed for every item in the
   // database.
   console.log([key, value]);
-
-  pre.textContent += `${i}: ${JSON.stringify([key, value.url])}\n`;
+  pre.textContent += `${i}: ${JSON.stringify([key, value.meta], null, '  ')}\n`;
 
 }).then(function() {
   console.log('Iteration has completed');
@@ -14,5 +13,3 @@ localforage.iterate(function(value, key, i) {
   // This code runs if there were any errors
   console.log(err);
 });
-
-
