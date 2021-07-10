@@ -6,34 +6,30 @@
 // console.log(`Help I'm alive`, browser.runtime, window.tabId);
 
 function captureMeta() {
-
-  // opengraph
-  let ogMeta = document.querySelectorAll('meta[property^="og:"]');
-  let opengraph = {};
+  // Opengraph
+  const ogMeta = document.querySelectorAll('meta[property^="og:"]');
+  const opengraph = {};
   for (const tag of ogMeta) {
-    let attr = tag.attributes;
+    const attr = tag.attributes;
     opengraph[attr.property.textContent.split('og:').pop()] = attr.content.textContent;
   }
 
-  let twFromName = document.querySelectorAll('meta[name^="twitter:"]');
-  let twitter = {};
+  // Twitter / name attribute
+  const twFromName = document.querySelectorAll('meta[name^="twitter:"]');
+  const twitter = {};
   for (const tag of twFromName) {
-    let attr = tag.attributes;
+    const attr = tag.attributes;
     twitter[attr.name.textContent.split('twitter:').pop()] = attr.content.textContent;
   }
 
-  // some sites have a mix: property: twitter:
-  let twFromProp = document.querySelectorAll('meta[property^="twitter:"]');
+  // Some sites have a mix: property: twitter:
+  const twFromProp = document.querySelectorAll('meta[property^="twitter:"]');
   for (const tag of twFromProp) {
-    let attr = tag.attributes;
+    const attr = tag.attributes;
     twitter[attr.property.textContent.split('twitter:').pop()] = attr.content.textContent;
   }
 
-  let url = document.url;
-
-  browser.runtime.sendMessage({ opengraph, twitter, url })
+  browser.runtime.sendMessage({ opengraph, twitter, url: document.url });
 }
 
 captureMeta();
-
-

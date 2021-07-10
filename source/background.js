@@ -1,58 +1,45 @@
-/* global browser */
+/* global browser localforage */
 
 const APP_URL = 'https://stupid-enormous-square-hero.fission.app/';
 const EXT_URL = browser.runtime.getURL('pages');
 
-console.log(EXT_URL);
-
-
 async function captureTabImage(tabId) {
   console.log('captureTabImage');
-  return await browser.tabs.captureVisibleTab(tabId);
+  return browser.tabs.captureVisibleTab(tabId);
 }
 
 async function handlePageData(data) {
   console.log('handlePageData');
-  let imageData = await captureTabImage();
-  let ts = Date.now();
-  let pageInfo = {
-    imageData: imageData,
+  const imageData = await captureTabImage();
+  const ts = Date.now();
+  const pageInfo = {
+    imageData,
     timestamp: ts,
     meta: data
   };
 
-  console.log(pageInfo);
-
-  let key = `patchy-queue::${pageInfo.timestamp}`;
-  localforage.setItem(key, pageInfo).then((result) => {
-    console.log("okay?");
+  const key = `patchy-queue::${pageInfo.timestamp}`;
+  localforage.setItem(key, pageInfo).then(result => {
+    console.log('okay?', result);
     setTimeout(() => {
       openQueue();
-    }, 2000);
-  })
-  .catch((err) => { throw err; });
+    }, 1000);
+  }).catch(error => {
+    throw error;
+  });
 }
 
 browser.runtime.onMessage.addListener(handlePageData);
 
 async function captureMetaData(tabId) {
-  let page = await browser.tabs.executeScript(tabId, {
+  const page = await browser.tabs.executeScript(tabId, {
     file: './meta-scraper.js'
   });
 
   return page;
 }
 
-async function ensureTabIsOpen(url, active=true) {
-
-  let tabs = await browser.tabs.query({ url: url });
-
-  console.log(tabs);
-
-}
-
 async function runAction(tab) {
-
   await browser.tabs.executeScript(tab.tabId, {
     file: 'meta-scraper.js'
   });
@@ -84,14 +71,3 @@ function openQueue() {
     active: false
   });
 }
-
-// browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
-
-//   if (browser.runtime.id === sender.id) {
-//     console.log(request, sender, sendResponse);
-//   }
-//   else {
-//     console.log(`Caught message from another extension: ${sender.id}`);
-//   }
-  
-// });
