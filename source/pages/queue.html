@@ -5,14 +5,46 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Page queue</title>
+  <style>
+
+body * {
+  font-family: "arial";
+}
+
+div#queue {
+  display: grid;
+  border: 1px dashed #cbcbcb;
+  color: #231223;
+  font-family: "arial";
+  width: 50%;
+  padding: 6px 20px 15px 0;
+  margin: 10px;
+}
+
+div#queue div img {
+  float: left;
+  display: inline;
+  border: 1px solid red;
+  margin: 0 10px 10px 0;
+}
+
+div#queue div {
+  display: block;
+}
+
+div#queue span {
+  font-style: italic;
+}
+
+  </style>
 </head>
 <body>
-  
-  <h2>Queue contents</h2>
+  <h1>Queue contents</h1>
 
-  <pre id="queue"></pre>
+  <div id="queue"></div>
 
-  <script src="../localforage.js"></script>
+  <script src="../lib/localforage.js"></script>
+  <script src="../lib/functions.js"></script>
   <script src="./queue.js"></script>
 </body>
 </html>

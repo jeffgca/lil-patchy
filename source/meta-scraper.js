@@ -5,6 +5,22 @@
 
 // console.log(`Help I'm alive`, browser.runtime, window.tabId);
 
+
+// poor man's lodash defaults, right-most set value wins
+function combine(defaults, ...args) {
+  console.log(args)
+  for (const key in defaults) {
+    console.log(key, defaults[key])
+
+		args.forEach((val, i) => { 
+      if (val.hasOwnProperty(key)) {
+        defaults[key] = val[key];
+      }
+    })
+  }
+  return defaults;
+}
+
 function captureMeta() {
   // Opengraph
   const ogMeta = document.querySelectorAll('meta[property^="og:"]');
@@ -29,7 +45,19 @@ function captureMeta() {
     twitter[attr.property.textContent.split('twitter:').pop()] = attr.content.textContent;
   }
 
-  browser.runtime.sendMessage({ opengraph, twitter, url: document.url });
+  let descFromPage = document.querySelectorAll('meta[name="description"]')[0].content || 'No description set.';
+
+  let fromPage = {
+    title: document.title,
+    description: descFromPage,
+    image: false
+  }
+
+  console.log('DEBUG', fromPage, twFromName, twFromProp, opengraph);
+
+  return combine(fromPage, twFromProp, twFromName, opengraph);
 }
 
-captureMeta();
+let metaInfo = captureMeta();
+
+browser.runtime.sendMessage({ type: 'page-data', data: metaInfo, url: document.URL.toString() });
