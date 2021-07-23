@@ -1,24 +1,20 @@
 /* global browser localforage */
 
-const APP_URL = 'https://stupid-enormous-square-hero.fission.app/';
-const EXT_URL = browser.runtime.getURL('/');
-
 let Ports = {};
 
 (async () => {
 
-/**
- *   "content_scripts": [
-    {
-      "matches": ["https://stupid-enormous-square-hero.fission.app/"],
-      "js": ["proxy.js"]
-    }
-  ],
- * 
-*/
+  const EXT_URL = browser.runtime.getURL('/');
+  let APP_URL =  await localforage.getItem('APP_URL');
+
+  if (!APP_URL) {
+    APP_URL = DEFAULT_APP_URL;
+  }
+
+  console.log(APP_URL);
 
   await browser.contentScripts.register({
-    matches: [`${APP_URL}`],
+    matches: [`${APP_URL}/`],
     js: [{
       code: `window.patchy = { 
         ext: '${EXT_URL}',

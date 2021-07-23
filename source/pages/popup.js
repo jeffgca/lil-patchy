@@ -1,5 +1,11 @@
 /* global browser */
 
+let APP_URL = await localforage.getItem('APP_URL');
+
+if (!APP_URL) {
+  APP_URL = DEFAULT_APP_URL || "No APP_URL Configured?";
+}
+
 function tplSavedDate(ts) {
   let d = new Date(ts);
   let dateString = d.getUTCDate();
@@ -25,6 +31,8 @@ function setError(parentSelector, error) {
 
 const ts = Date.now();
 const key = `patchy-queue::${ts}`;
+
+document.querySelector('#app-link').href = APP_URL;
 
 // get current activeTab
 

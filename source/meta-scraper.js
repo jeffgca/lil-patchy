@@ -10,7 +10,7 @@
 function combine(defaults, ...args) {
   console.log(args)
   for (const key in defaults) {
-    console.log(key, defaults[key])
+    // console.log(key, defaults[key])
 
 		args.forEach((val, i) => { 
       if (val.hasOwnProperty(key)) {

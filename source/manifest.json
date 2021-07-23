@@ -9,6 +9,7 @@
   "background": {
     "scripts": [ 
       "lib/localforage.js",
+      "config.js",
       "background.js" 
     ]
   },
@@ -16,9 +17,13 @@
     "default_icon": "icons/fission-32.png",
     "default_popup": "pages/popup.html"
   },
+  "options_ui": {
+    "page": "pages/options.html"
+  },
   "permissions": [
     "<all_urls>",
     "tabs",
-    "activeTab"
+    "activeTab",
+    "storage"
   ]
 }

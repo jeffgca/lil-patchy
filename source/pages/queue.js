@@ -21,7 +21,7 @@
     localforage.iterate((value, key, i) => {
       // console.log(i, key, value);
     
-      let imageSrc = value.meta.image || value.imageData;
+      let imageSrc = value.meta.image || value.imageUri;
     
       let uploadedEmoji = emoji.local;
       let uploadedStatusTxt = `Stored locally.`;
