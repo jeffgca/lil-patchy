@@ -27,22 +27,31 @@ function captureMeta() {
   const opengraph = {};
   for (const tag of ogMeta) {
     const attr = tag.attributes;
-    opengraph[attr.property.textContent.split('og:').pop()] = attr.content.textContent;
+    opengraph[attr.property.value.split('og:').pop()] = attr.content.value;
   }
 
   // Twitter / name attribute
   const twFromName = document.querySelectorAll('meta[name^="twitter:"]');
   const twitter = {};
-  for (const tag of twFromName) {
-    const attr = tag.attributes;
-    twitter[attr.name.textContent.split('twitter:').pop()] = attr.content.textContent;
+  try {
+    for (const tag of twFromName) {
+      twitter[tag.name.split('twitter:').pop()] = tag.content;
+    }    
+  } catch (err) {
+    console.error('Error parsing twitter named metadata', err);
   }
+
 
   // Some sites have a mix: property: twitter:
   const twFromProp = document.querySelectorAll('meta[property^="twitter:"]');
   for (const tag of twFromProp) {
-    const attr = tag.attributes;
-    twitter[attr.property.textContent.split('twitter:').pop()] = attr.content.textContent;
+    
+    try {
+      const attr = tag.attributes;
+      twitter[attr.property.value.split('twitter:').pop()] = attr.content.value;
+    } catch(err) {
+      console.error('Error parsing twitter property metadata', err);
+    }
   }
 
   let descFromPage = document.querySelectorAll('meta[name="description"]')[0].content || 'No description set.';
@@ -59,3 +68,4 @@ function captureMeta() {
 }
 
 captureMeta();
+
