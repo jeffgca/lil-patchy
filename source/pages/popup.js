@@ -1,21 +1,59 @@
 /* global browser */
 
+function tplSavedDate(ts) {
+  let d = new Date(ts);
+  let dateString = d.getUTCDate();
+  return `<span>Saved on ${dateString}</span>`;
+}
 
-(async () => {
+function setDisplay(parentSelector, data) {
+  let wrapper = document.querySelector(parentSelector);
+  let content = `<img width="350" src="${data.imageUri}">
+  <h3>${data.meta.title}</h3>
+  <p>${data.meta.description}</p>
+  `;
+  wrapper.insertAdjacentHTML('beforeend', content);
+}
 
-  let tab = await getCurrentActiveTab();
+function setError(parentSelector, error) {
+  let wrapper = document.querySelector(parentSelector);
+  let content = `<h1>Error:</h1>
+  <pre>${error}</pre>`;
+  wrapper.insertAdjacentHTML('beforeend', content);
+  wrapper.className = 'error';
+}
 
-  let imageData = await captureTabImage(tab.id);
+const ts = Date.now();
+const key = `patchy-queue::${ts}`;
 
-  // console.log(tab);
+// get current activeTab
 
-  // browser.runtime.sendMessage({
-  //   type: 'tab-id',
-  //   tabId: tab.id
-  // });
+let result = await browser.tabs.query({
+  active: true,
+  currentWindow: true
+});
 
+let currentTab = result.pop();
 
+// get the screenshot
+let imageUri = await browser.tabs.captureVisibleTab(currentTab.windowId);
 
+let metaResult = await browser.tabs.executeScript(currentTab.id, {
+  file: '/meta-scraper.js'
+});
 
+let pageInfo = {
+  timestamp: ts,
+  url: currentTab.url,
+  meta: metaResult[0],
+  uploaded: false,
+  imageUri
+}
 
-})();
+localforage.setItem(key, pageInfo).then(result => {
+  // console.log('okay?', result);
+  // represent the saved page
+  setDisplay('div#saved-content', pageInfo);
+}).catch(error => {
+  throw error;
+});

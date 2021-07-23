@@ -13,7 +13,6 @@ body * {
 
 div#queue {
   display: grid;
-  border: 1px dashed #cbcbcb;
   color: #231223;
   font-family: "arial";
   width: 50%;
@@ -21,11 +20,18 @@ div#queue {
   margin: 10px;
 }
 
+div#queue div {
+  border: 1px dashed #565656;
+  border-radius: 6px;
+  padding: 4px 4px 4px 6px;
+  margin-bottom: 6px;
+}
+
 div#queue div img {
   float: left;
   display: inline;
-  border: 1px solid red;
-  margin: 0 10px 10px 0;
+  border: 1px solid #dcdcdc;
+  margin: 4px 10px 10px 0;
 }
 
 div#queue div {
@@ -36,15 +42,21 @@ div#queue span {
   font-style: italic;
 }
 
+div#queue h2 {
+  margin-top: 0;
+}
+
   </style>
 </head>
 <body>
-  <h1>Queue contents</h1>
+  <h1>Lil' Patchy Queue contents</h1>
 
-  <div id="queue"></div>
+  <div id="queue">
 
-  <script src="../lib/localforage.js"></script>
-  <script src="../lib/functions.js"></script>
-  <script src="./queue.js"></script>
+    <p>When you save some pages, they will appear here.</p>
+  </div>
+
+  <script src="/lib/localforage.js"></script>
+  <script src="queue.js"></script>
 </body>
 </html>

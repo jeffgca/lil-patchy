@@ -1,11 +1,24 @@
 /* global browser */
 
-const sendMessage = function (request, sender, sendResponse) {
-  sendResponse({ farewell: 'goodbye' });
+console.log('help I\'m alive in the content script');
 
-  console.log('In content script:', request);
+console.log('window.patchy', window.patchy);
 
-  window.postMessage({ detail: request }, 'https://stupid-enormous-square-hero.fission.app/');
-};
+let extPort = browser.runtime.connect({name: 'ext-proxy'});
 
-browser.runtime.onMessage.addListener(sendMessage);
+window.addEventListener('message', (event) => {
+  console.log('cs message listener', event);
+  // extPort.postMessage({id: window.patchy.app, message: 'CS_ATTACHED'});
+
+  if (event.data.type === 'FROM_PAGE' && event.data.text === 'User is authenticated.') {
+    // signal the extension we're ready
+    extPort.postMessage({id: window.patchy.app, message: 'CS_ATTACHED'});
+  }
+});
+
+extPort.onMessage.addListener((event) => {
+  console.log('event', event);
+  if (event.id === window.patchy.ext) {
+    window.postMessage(event);
+  }
+});

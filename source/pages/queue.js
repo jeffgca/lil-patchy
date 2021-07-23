@@ -1,52 +1,57 @@
 /* global localforage */
-const list = document.querySelector('div#queue');
 
-localforage.iterate((value, key, i) => {
+(async () => {
 
-  console.log(i, key, value);
+  const list = document.querySelector('div#queue');
 
-  // Resulting key/value pair -- this callback
-  // will be executed for every item in the
-  // database.
-  let item = document.createElement('div');
-  let image = document.createElement('img');
-  image.src = value.imageData;
-  image.width = 160;
-  image.height = 150;
-
-  if (value.meta && value.meta.image) {
-    image.src = value.meta.image;
+  // list.insertAdjacentHTML('beforeend', `<p id="loading-para">Loading...</p>`);
+  
+  const emoji = {
+    local: '🐛',
+    uploaded: '🦋'
   }
+  
+  let content = [];
+  
+  let numRecords = await localforage.length();
+  
+  console.log('numRecords', numRecords);
+  
+  if (numRecords > 0) {
+    localforage.iterate((value, key, i) => {
+      // console.log(i, key, value);
+    
+      let imageSrc = value.meta.image || value.imageData;
+    
+      let uploadedEmoji = emoji.local;
+      let uploadedStatusTxt = `Stored locally.`;
+    
+      if (value.uploaded === true) {
+        uploadedEmoji = emoji.uploaded;
+        uploadedStatusTxt = `Successfully synchronized.`;
+      }
+    
+      let block = `<div>
+        <a href="${value.url}" target="_blank">
+          <img src="${imageSrc}" width="160">
+        </a>
+        <h2>${value.meta.title}</h2>
+        <p>${value.meta.description}</p>
+        <p>
+          [ <a href="${value.url}" target="_blank">Link</a> ] || 
+          <span>Status: ${uploadedEmoji} ${uploadedStatusTxt}</span>
+        </p>
+      </div>`;
+    
+      content.push(block);
+      
+    }).then(() => {
+      list.insertAdjacentHTML('beforeend', content.join("\n"));
+      console.log('Iteration has completed');
+    }).catch(error => {
+      // This code runs if there were any errors
+      throw error;
+    });
+  }
+})();
 
-  let imgLink = document.createElement('a');
-  imgLink.href = value.url;
-  imgLink.target = '_blank';
-
-  imgLink.appendChild(image);
-
-  item.appendChild(imgLink);
-
-  let title = document.createElement('h2');
-  title.textContent = value.meta.title;
-
-  item.appendChild(title);
-
-  let desc = document.createElement('span');
-  desc.textContent = value.meta.description + "\n\n";
-
-  item.appendChild(desc);
-
-  let link = document.createElement('a');
-  link.href = value.url;
-  link.textContent = 'Link';
-  link.target = '_blank';
-
-  item.appendChild(link);
-
-  list.appendChild(item);
-}).then(() => {
-  console.log('Iteration has completed');
-}).catch(error => {
-  // This code runs if there were any errors
-  console.log(error);
-});

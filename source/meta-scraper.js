@@ -51,13 +51,11 @@ function captureMeta() {
     title: document.title,
     description: descFromPage,
     image: false
-  }
+}
 
   console.log('DEBUG', fromPage, twFromName, twFromProp, opengraph);
 
   return combine(fromPage, twFromProp, twFromName, opengraph);
 }
 
-let metaInfo = captureMeta();
-
-browser.runtime.sendMessage({ type: 'page-data', data: metaInfo, url: document.URL.toString() });
+captureMeta();

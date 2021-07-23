@@ -5,16 +5,26 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lil Patchy Menu Pop-up</title>
+  <style>
+    div#saved-content {
+      display: grid;
+    }
+
+    .error {
+      color: red;
+    }
+  </style>
 </head>
 <body>
-  <h1>Hi this is a pop-up</h1>
-  <script src="../background.js"></script>
-  <script src="./popup.js"></script>
-  
-  <h3>Links</h3>
+  <h3>Page captured:</h3>
+  <!-- <script type="module" src="/lib/functions.js"></script> -->
+  <div id="saved-content"></div>
   <ul>
     <li><a href="/pages/queue.html" target="_blank">Queue of unsaved pages</a></li>
-    <li><a href="#">Extension settings</a></li>
+    <!-- <li><a href="#">Extension settings</a></li> -->
+    <li><a id="app-link" href="">Open 'Lil Patchy Saver' App</a></li>
   </ul>
+  <script src="/lib/localforage.js"></script>
+  <script type="module" src="popup.js"></script>
 </body>
 </html>
