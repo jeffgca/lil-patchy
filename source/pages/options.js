@@ -1,20 +1,21 @@
-function saveOptions(e) {
-  e.preventDefault();
-  localforage.setItem('APP_URL', document.querySelector("#app-url").value);
+/* global localforage DEFAULT_APP_URL */
+
+function saveOptions(event) {
+  event.preventDefault();
+  localforage.setItem('APP_URL', document.querySelector('#app-url').value);
 }
 
 function restoreOptions() {
-
   function setCurrentChoice(result) {
-    document.querySelector("#app-url").value = result || DEFAULT_APP_URL || "No APP_URL Configured";
+    document.querySelector('#app-url').value = result || DEFAULT_APP_URL || 'No APP_URL Configured';
   }
 
   function onError(error) {
     console.log(`Options page error: ${error}`);
   }
 
-  let getting = localforage.getItem('APP_URL');
-  getting.then(setCurrentChoice, onError);
+  localforage.getItem('APP_URL')
+    .then(setCurrentChoice, onError);
 }
 
 document.addEventListener('DOMContentLoaded', restoreOptions);

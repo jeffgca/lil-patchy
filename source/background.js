@@ -1,11 +1,10 @@
-/* global browser localforage */
+/* global browser localforage DEFAULT_APP_URL */
 
-let Ports = {};
+const Ports = {};
 
 (async () => {
-
   const EXT_URL = browser.runtime.getURL('/');
-  let APP_URL =  await localforage.getItem('APP_URL');
+  let APP_URL = await localforage.getItem('APP_URL');
 
   if (!APP_URL) {
     APP_URL = DEFAULT_APP_URL;
@@ -13,46 +12,40 @@ let Ports = {};
 
   console.log(APP_URL);
 
-  await browser.contentScripts.register({
+  const result = await browser.contentScripts.register({
     matches: [`${APP_URL}/`],
     js: [{
       code: `window.patchy = { 
         ext: '${EXT_URL}',
         app: '${APP_URL}' };`
     }, {
-      file: "/proxy.js"
+      file: '/roxy.js'
     }]
   });
 
-  // register the content scripts
+  // Register the content scripts
   // function that fetches data from localforage
-  // XXX todo: spec out new interaction between 
-  // extension and web app based on this new model.
-
-  async function getPatchyQueue(isUploaded=false) {
+  async function getPatchyQueue(isUploaded = false) {
     console.log('in getPatchyQueue', isUploaded);
-    let data = [], keys = [];
-    let completed = await localforage.iterate((value, key, i) => {
-      // console.log(i, key, value);
+    const data = [];
+    const result = await localforage.iterate(value => {
       if (value.uploaded === isUploaded) {
         data.push(value);
-        // keys.push(key);
       }
     });
-    // console.log(completed, data);
+
     return data;
   }
 
   function connected(port) {
-    port.onMessage.addListener( async (event) => {
+    port.onMessage.addListener(async event => {
       console.log('from port', event);
-      let data = await getPatchyQueue();
-      port.postMessage({id: EXT_URL, data: data});
+      const data = await getPatchyQueue();
+      port.postMessage({ id: EXT_URL, data });
     });
 
     Ports[port.sender.tab.id] = port;
   }
 
   browser.runtime.onConnect.addListener(connected);
-
 })();

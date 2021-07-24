@@ -2,10 +2,7 @@
 	"private": true,
 	"scripts": {
 		"build": "parcel build source/manifest.json --no-content-hash --no-source-maps --dist-dir distribution --no-cache --detailed-report 0",
-		"lint": "run-p lint:*",
-		"lint-fix": "run-p 'lint:* -- --fix'",
-		"lint:js": "xo --ignore localforage.js",
-		"test": "run-p lint:* build",
+		"test": "echo 'what no tests?'",
 		"watch": "parcel watch source/manifest.json --dist-dir distribution --no-cache --no-hmr"
 	},
 	"browserslist": [

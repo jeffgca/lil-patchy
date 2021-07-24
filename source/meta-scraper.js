@@ -3,9 +3,6 @@
 // invaluable:
 // https://devhints.io/html-meta
 
-// console.log(`Help I'm alive`, browser.runtime, window.tabId);
-
-
 // poor man's lodash defaults, right-most set value wins
 function combine(defaults, ...args) {
   console.log(args)
