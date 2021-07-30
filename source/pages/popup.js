@@ -4,6 +4,12 @@
 
   let APP_URL = await localforage.getItem('APP_URL');
 
+  let badgeString = await browser.browserAction.getBadgeText({}), currentCount;
+
+  let badgeInt = parseInt(badgeString);
+
+  console.log('badgeString', badgeString, badgeInt);
+
   if (!APP_URL) {
     APP_URL = DEFAULT_APP_URL || "No APP_URL Configured?";
   }
@@ -64,10 +70,19 @@
     // console.log('okay?', result);
     // represent the saved page
     setDisplay('div#saved-content', pageInfo);
+    badgeInt++;
+    console.log('in setItem', badgeInt);
+
+    let details = {
+      text: `${badgeInt}`
+    };
+
+    browser.browserAction.setBadgeText(details)
+      .then(() => {
+        console.log('done?');
+      });
   }).catch(error => {
     throw error;
   });
-  
-
 })();
 

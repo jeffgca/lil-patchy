@@ -37,6 +37,8 @@ const Ports = {};
     return data;
   }
 
+  let queue = await getPatchyQueue();
+
   function connected(port) {
     port.onMessage.addListener(async event => {
       console.log('from port', event);
@@ -47,5 +49,16 @@ const Ports = {};
     Ports[port.sender.tab.id] = port;
   }
 
+  let queueSize = queue.length || 0;
+
   browser.runtime.onConnect.addListener(connected);
+  browser.browserAction.setBadgeBackgroundColor({
+    color: '#efefef'
+  });
+  browser.browserAction.setBadgeTextColor({
+    color: '#000'
+  });
+  browser.browserAction.setBadgeText({
+    text: `${queueSize}`
+  })
 })();
